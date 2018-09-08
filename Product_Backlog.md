@@ -1,13 +1,13 @@
-**Funktionelle krav:**
-En bruger skal kunne se en list af historier
+**Funktionelle krav**
+1.En bruger skal kunne se en list af historier
 En bruger skal kunne læse en historie på siden
 En bruger skal kunne upvote/downvote en historie
 En bruger skal kunne logge ind
 En bruger skal kunne sætte en historie op
 En bruger skal kunne lave kommentarer
 
-**Non-funktionelle krav:**
-Hjemmesiden skal se indbydende ud
+**Non-funktionelle krav**
+1. Hjemmesiden skal se indbydende ud
 Hjemmesiden skal være brugervenlig
 
 **Product backlog:**
