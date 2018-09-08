@@ -1,27 +1,20 @@
-**Funktionelle krav**
-En bruger skal kunne se en list af historier
-En bruger skal kunne læse en historie på siden
-En bruger skal kunne upvote/downvote en historie
-En bruger skal kunne logge ind
-En bruger skal kunne sætte en historie op
-En bruger skal kunne lave kommentarer
+**Product backlog**  
 
-**Non-funktionelle krav**
-Hjemmesiden skal se indbydende ud
-Hjemmesiden skal være brugervenlig
-
-**Product backlog:**
-1. En bruger skal kunne logge ind
-2. En bruger skal kunne sætte en historie op
-3. En bruger skal kunne se en list af historier
-4. En bruger skal kunne læse en historie på siden
-5. En bruger skal kunne lave kommentarer
-6. En bruger skal kunne upvote/downvote en historie
-7. Karma points
-8. Anmeld SPAM
-9. Database
-10. HTTP API
-11. Server
-12. Messaging system
-13. Gemme data i database fra hjemmeside
-14. Gemme data i database fra messaging system
+| Krav | Prioritering | Estimering (*arbejdstimer*) |
+| :---          |     :---:     |    :---:     |
+| En bruger skal kunne logge ind | 3 | 3 |
+| En bruger skal kunne sætte en historie op | 4 | 3 |
+| En bruger skal kunne se en list af historier | 5 | 2 |
+| En bruger skal kunne læse en historie på siden | 6 | 2 |
+| En bruger skal kunne lave kommentarer | 7 | 3 |
+| En bruger skal kunne upvote/downvote en historie | 8 | 2 |
+| Karma points | 9 | 2 |
+| Anmeld SPAM | 12 | 4 |
+| Database | 1 | 5 |
+| HTTP API | 11 | 3 |
+| Server | 16 | 99 |
+| Messaging system | 10 | 5 |
+| Gemme data i database fra hjemmeside | 2 | 10 |
+| Gemme data i database fra messaging system | 13 | 8 |
+| Hjemmesiden skal se indbydende ud | 14 | 3 |
+| Hjemmesiden skal være brugervenlig | 15 | 3 |
