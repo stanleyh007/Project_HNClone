@@ -11,3 +11,8 @@ Despite the fact that we're mostly focusing on the actual functionality of the p
 Given that hacker-news functions as a sort of proto-reddit, it's best that we find a way to show all the stories' headlines in a hub, much like the site itself, but only after making sure we can compute a single story on its proper page
 6. Voting functionality
 Given that stories on hacker-news can be voted on, so should the stories on our clone. We can decide if we want to limit user functionality in this area later, we need to make sure it works first of all.
+
+| First Header  | Second Header |
+| ------------- | ------------- |
+| Content Cell  | Content Cell  |
+| Content Cell  | Content Cell  |
