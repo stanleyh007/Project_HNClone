@@ -15,23 +15,74 @@ namespace Project_HNClone.Controllers
             return View();
         }
 
-        public IActionResult About()
+        public IActionResult Newest()
         {
-            ViewData["Message"] = "Your application description page.";
+            //ViewData["Message"] = "Your application description page.";
 
             return View();
         }
 
-        public IActionResult Contact()
+        public IActionResult Show()
         {
-            ViewData["Message"] = "Your contact page.";
+            //ViewData["Message"] = "Your contact page.";
 
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Newcomments()
         {
             return View();
+        }
+
+         public IActionResult Ask()
+        {
+            return View();
+        }
+
+        public IActionResult Jobs()
+        {
+          return View();
+        }
+
+        public IActionResult Submit()
+        {
+          return View();
+        }
+
+        public IActionResult NewsGuidelines()
+        {
+          return View();
+        }
+
+
+        public IActionResult Newsfaq()
+        {
+          return View();
+        }
+
+        public IActionResult Security()
+        {
+          return View();
+        }
+
+        public IActionResult Lists()
+        {
+          return View();
+        }
+
+        public IActionResult Bookmarklet()
+        {
+          return View();
+        }
+
+        public IActionResult Legal()
+        {
+          return View();
+        }
+
+        public IActionResult Apply()
+        {
+          return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
