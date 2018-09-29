@@ -26,51 +26,25 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a href="/">
-                        <img src="~/images/y18.gif" class="navbar-brand" />
-                    </a>
-                    <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Hacker News</a>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Project_HNClone</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a asp-area="" asp-controller="Home" asp-action="Newest">news</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Newcomments">comments</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Show">show</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Ask">ask</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Jobs">jobs</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Submit">submit</a></li>
-                    </ul>
-                    <ul class="nav navbar-nav" style="float:right">
-                        <li><a asp-area="" asp-controller="Login" asp-action="Index">login</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <?partial name="_CookieConsentPartial" /?>
+        <partial name="_CookieConsentPartial" />
 
         <div class="container body-content">
             @RenderBody()
             <hr />
-            <footer style="text-align:center">
-                <p><a asp-area="" asp-controller="Home" asp-action="Apply">Applications are open for YC Winter 2019</a></p>
-                <br />
-                <span>
-                  <a asp-area="" asp-controller="Home" asp-action="NewsGuidelines">Guidelines</a> |
-                  <a asp-area="" asp-controller="Home" asp-action="Newsfaq">FAQ</a> |
-                  <a href="mailto:">Support</a> |
-                  <a href="http://github.com">API</a> |
-                  <a asp-area="" asp-controller="Home" asp-action="Lists">Lists</a> |
-                  <a asp-area="" asp-controller="Home" asp-action="Bookmarklet">Bookmarklet</a> |
-                  <a asp-area="" asp-controller="Home" asp-action="Legal">Legal</a> |
-                  <a asp-area="" asp-controller="Home" asp-action="Apply">Apply to YC</a> |
-                  <a href="mailto:">Contact</a>
-                </span>
-                <br />
-                <br />
-                <form>
-                  Search: <input type="text" name="s" size="17" autocomplete="off" spellcheck="false"/>
-                </form>
+            <footer>
+                <p>&copy; 2018 - Project_HNClone</p>
             </footer>
         </div>
 

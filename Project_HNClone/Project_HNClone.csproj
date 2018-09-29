@@ -9,19 +9,4 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.109.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Comment\" />
-    <Folder Include="wwwroot\js\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Views\Home\Bookmarklet.cshtml~HEAD" />
-    <None Remove="Views\Home\Bookmarklet.cshtml" />
-    <None Remove="Views\Home\Newest.cshtml~067b32d... Frontend update" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="Views\Home\Newest.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Home\Bookmarklet.cshtml" />
-  </ItemGroup>
 </Project>
