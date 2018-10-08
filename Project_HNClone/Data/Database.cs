@@ -38,8 +38,8 @@ namespace Project_HNClone.Data
         {
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=MyDatabase.sqlite;Version=3;");
             m_dbConnection.Open();
-            
-            string sql = "insert into users values (" + user.name + ", " + user.password + ", " + "0, " , admin, 9000, 2018-01-01 00:00:00)";
+
+            string sql = "insert into users values (' + user.name + ', ' + user.password + ', ' + ' 0, ' , admin, 9000, 2018-01-01 00:00:00)";
 
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();

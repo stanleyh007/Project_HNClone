@@ -20,8 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Views\Home\Newest.cshtml" />
+    <Content Remove="Views\Home\Bookmarklet.cshtml" />
+    <Content Remove="Models\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Bookmarklet.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Models\Middleware.cs" />
   </ItemGroup>
 </Project>
