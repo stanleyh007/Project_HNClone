@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Project_HNClone.Models;
+using Project_HNClone.Queries;
 
 namespace Project_HNClone.Controllers
 {
