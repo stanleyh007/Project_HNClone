@@ -4,14 +4,26 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Project_HNClone.Models;
 
 namespace Project_HNClone.Controllers
 {
     public class HomeController : Controller
     {
+        // Needed to read connectionstring
+        private readonly IConfiguration configuration;
+
+        public HomeController(IConfiguration config)
+        {
+            this.configuration = config;
+        }
+
         public IActionResult Index()
         {
+            // Test to see that it works and it does
+            test test = new test();
+            test.testCake(configuration.GetConnectionString("DefaultConnection"));
             return View();
         }
 
