@@ -7,4 +7,4 @@
 
 IConfigurationRoot configurationRoot = configurationBuilder.Build();
 
-configurationRoot.GetConnectionString("Default");
+configurationRoot.GetConnectionString("DefaultConnection");
