@@ -140,7 +140,7 @@ namespace Project_HNClone.Queries
 
                 try
                 {
-                    command.CommandText = "INSERT INTO Users VALUES ('@NAME', '@PASSWORD');";
+                    command.CommandText = "INSERT INTO Users (Name, Password) VALUES ('@NAME', '@PASSWORD');";
                     command.Parameters.Add("@NAME", SqlDbType.NVarChar).Value = name;
                     command.Parameters.Add("@PASSWORD", SqlDbType.NVarChar).Value = password;
 
