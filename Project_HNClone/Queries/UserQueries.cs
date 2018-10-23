@@ -19,6 +19,60 @@ namespace Project_HNClone.Queries
             this.configuration = config;
         }
 
+        public User GetUser(String name)
+        {
+            User wantedUser = new User();
+            using (SqlConnection connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                SqlCommand command = new SqlCommand();
+                SqlDataReader reader;
+                command.Connection = connection;
+
+                try
+                {
+                    command.CommandText = "SELECT * FROM Users WHERE Users.Name = @NAME";
+                    command.Parameters.Add("@NAME", SqlDbType.NVarChar).Value = name;
+
+                    connection.Open();
+                    reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            if (reader.GetName(i) == "ID")
+                            {
+                                wantedUser.id = reader.GetInt32(i);
+                            }
+                            if (reader.GetName(i) == "Name")
+                            {
+                                wantedUser.name = reader.GetString(i);
+                            }
+                            if (reader.GetName(i) == "Password")
+                            {
+                                wantedUser.password = reader.GetString(i);
+                            }
+                            if (reader.GetName(i) == "Karma")
+                            {
+                                wantedUser.karma = reader.GetInt32(i);
+                            }
+                            if (reader.GetName(i) == "CreationDate")
+                            {
+                                wantedUser.creationDate = reader.GetDateTime(i).ToString();
+                            }
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    // ignored
+                }
+            }
+            return wantedUser;
+        }
+
         public bool VerifyUser(String name, String password)
         {
             bool verified = false;
@@ -76,5 +130,6 @@ namespace Project_HNClone.Queries
             return verified;
         }
 
+        
     }
 }

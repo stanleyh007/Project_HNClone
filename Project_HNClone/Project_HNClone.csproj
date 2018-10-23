@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.109.1" />
   </ItemGroup>
 
@@ -28,5 +29,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Models\Middleware.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic">
+      <HintPath>Microsoft.VisualBasic.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
