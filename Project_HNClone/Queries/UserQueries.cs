@@ -166,5 +166,40 @@ namespace Project_HNClone.Queries
             return verified;
         }
 
+        public bool UpdateUser(int karma, int id)
+        {
+            bool verified = true;
+            using (SqlConnection connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                SqlCommand command = new SqlCommand();
+                command.Connection = connection;
+
+                try
+                {
+                    command.CommandText = "UPDATE Users SET Karma = @KARMA WHERE Users.Id = @ID;";
+                    command.Parameters.Add("@KARMA", SqlDbType.Int).Value = karma;
+                    command.Parameters.Add("@ID", SqlDbType.Int).Value = id;
+
+
+                    connection.Open();
+                    int result = command.ExecuteNonQuery();
+
+                    // Check Error
+                    if (result < 0)
+                    {
+                        Console.WriteLine("Error updating data in Database!");
+                        verified = false;
+                    }
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    // ignored
+                }
+            }
+            return verified;
+        }
     }
 }
