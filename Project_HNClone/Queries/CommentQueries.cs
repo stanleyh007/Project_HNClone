@@ -28,7 +28,7 @@ namespace Project_HNClone.Queries
 
                 try
                 {
-                    command.CommandText = "INSERT INTO Comments VALUES ('@CONTENT', '@OWNERID', '@STORYID');";
+                    command.CommandText = "INSERT INTO Comments (Content, OwnerID, StoryID) VALUES ('@CONTENT', '@OWNERID', '@STORYID');";
                     command.Parameters.Add("@CONTENT", SqlDbType.NVarChar).Value = content;
                     command.Parameters.Add("@OWNERID", SqlDbType.Int).Value = ownerID;
                     command.Parameters.Add("@STORYID", SqlDbType.Int).Value = storyID;
