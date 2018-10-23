@@ -130,6 +130,41 @@ namespace Project_HNClone.Queries
             return verified;
         }
 
-        
+        public bool CreateUser(String name, String password)
+        {
+            bool verified = true;
+            using (SqlConnection connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                SqlCommand command = new SqlCommand();
+                command.Connection = connection;
+
+                try
+                {
+                    command.CommandText = "INSERT INTO Users VALUES ('@NAME', '@PASSWORD');";
+                    command.Parameters.Add("@NAME", SqlDbType.NVarChar).Value = name;
+                    command.Parameters.Add("@PASSWORD", SqlDbType.NVarChar).Value = password;
+
+
+                    connection.Open();
+                    int result = command.ExecuteNonQuery();
+
+                    // Check Error
+                    if (result < 0)
+                    {
+                        Console.WriteLine("Error inserting data into Database!");
+                        verified = false;
+                    }
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    // ignored
+                }
+            }
+            return verified;
+        }
+
     }
 }
