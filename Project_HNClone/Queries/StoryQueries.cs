@@ -11,13 +11,12 @@ namespace Project_HNClone.Queries
 {
     public class StoryQueries
     {
-        private readonly IConfiguration _configuration;
         private readonly string _connectionString;
 
         public StoryQueries(IConfiguration config)
         {
-            this._configuration = config;
-            _connectionString = _configuration.GetConnectionString("DefaultConnection");
+            IConfiguration configuration = config;
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
         public bool CreateStory(Story story)
@@ -66,87 +65,74 @@ namespace Project_HNClone.Queries
             return success;
         }
 
-        public Story GetStory(int id = 0, string postUrl = null)
+        public Story GetStory(int id)
         {
             Story story = new Story();
 
-            if (id != 0 || postUrl != null)
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                SqlCommand command = new SqlCommand();
+                command.Connection = connection;
+
+                try
                 {
-                    SqlCommand command = new SqlCommand();
-                    SqlDataReader reader;
-                    command.Connection = connection;
+                    command.CommandText = "select * from Stories where Id = @Id";
+                    command.Parameters.AddWithValue("@Id", id);
 
-                    try
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
                     {
-                        if (id != 0)
+                        for (int i = 0; i < reader.FieldCount; i++)
                         {
-                            command.CommandText = "select * from Stories where Id = @Id";
-                            command.Parameters.AddWithValue("@Id", id);
-                        }
-
-                        else if (postUrl != null)
-                        {
-                            command.CommandText = "select * from Stories where PostURL = @PostURL";
-                            command.Parameters.AddWithValue("@PostURL", postUrl);
-                        }
-
-                        connection.Open();
-                        reader = command.ExecuteReader();
-
-                        while (reader.Read())
-                        {
-                            for (int i = 0; i < reader.FieldCount; i++)
+                            if (reader.GetName(i) == "Id")
                             {
-                                if (reader.GetName(i) == "Id")
-                                {
-                                    story.id = (int)reader.GetValue(i);
-                                }
-                                if (reader.GetName(i) == "Name")
-                                {
-                                    story.name = (string)reader.GetValue(i);
-                                }
-                                if (reader.GetName(i) == "Content")
-                                {
-                                    story.content = (string)reader.GetValue(i);
-                                }
-                                if (reader.GetName(i) == "CreatorID")
-                                {
-                                    story.creatorID = (int)reader.GetValue(i);
-                                }
-                                if (reader.GetName(i) == "CreatorName")
-                                {
-                                    story.creatorName = (string)reader.GetValue(i);
-                                }
-                                if (reader.GetName(i) == "PostType")
-                                {
-                                    story.postType = (string)reader.GetValue(i);
-                                }
-                                if (reader.GetName(i) == "PostURL")
-                                {
-                                    story.postURL = (string)reader.GetValue(i);
-                                }
-                                if (reader.GetName(i) == "PositiveRating")
-                                {
-                                    story.positiveRating = (int)reader.GetValue(i);
-                                }
-                                if (reader.GetName(i) == "NegativeRating")
-                                {
-                                    story.negativeRating = (int)reader.GetValue(i);
-                                }
-                                if (reader.GetName(i) == "PublishDate")
-                                {
-                                    story.publishDate = (DateTime)reader.GetValue(i);
-                                }
+                                story.id = (int)reader.GetValue(i);
+                            }
+                            if (reader.GetName(i) == "Name")
+                            {
+                                story.name = (string)reader.GetValue(i);
+                            }
+                            if (reader.GetName(i) == "Content")
+                            {
+                                story.content = (string)reader.GetValue(i);
+                            }
+                            if (reader.GetName(i) == "CreatorID")
+                            {
+                                story.creatorID = (int)reader.GetValue(i);
+                            }
+                            if (reader.GetName(i) == "CreatorName")
+                            {
+                                story.creatorName = (string)reader.GetValue(i);
+                            }
+                            if (reader.GetName(i) == "PostType")
+                            {
+                                story.postType = (string)reader.GetValue(i);
+                            }
+                            if (reader.GetName(i) == "PostURL")
+                            {
+                                story.postURL = (string)reader.GetValue(i);
+                            }
+                            if (reader.GetName(i) == "PositiveRating")
+                            {
+                                story.positiveRating = (int)reader.GetValue(i);
+                            }
+                            if (reader.GetName(i) == "NegativeRating")
+                            {
+                                story.negativeRating = (int)reader.GetValue(i);
+                            }
+                            if (reader.GetName(i) == "PublishDate")
+                            {
+                                story.publishDate = (DateTime)reader.GetValue(i);
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
-                        Console.WriteLine("  Message: {0}", ex.Message);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+                    Console.WriteLine("  Message: {0}", ex.Message);
                 }
             }
 
@@ -162,7 +148,6 @@ namespace Project_HNClone.Queries
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     SqlCommand command = new SqlCommand();
-                    SqlDataReader reader;
                     command.Connection = connection;
 
                     try
@@ -181,7 +166,7 @@ namespace Project_HNClone.Queries
                         }
 
                         connection.Open();
-                        reader = command.ExecuteReader();
+                        SqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())
                         {
