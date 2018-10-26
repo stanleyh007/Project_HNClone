@@ -229,5 +229,56 @@ namespace Project_HNClone.Queries
 
             return stories;
         }
+
+        public bool UpdateStoryRating(int id, string positiveOrNegative)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction = connection.BeginTransaction();
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    if (positiveOrNegative.ToLower() == "positive")
+                    {
+                        command.CommandText = "update Stories set PositiveRating += 1 where Id = @Id;";
+                    }
+                    else if (positiveOrNegative.ToLower() == "negative")
+                    {
+                        command.CommandText = "update Stories set NegativeRating += 1 where Id = @Id;";
+                    }
+                    command.Parameters.AddWithValue("@Id", id);
+
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+                    Console.WriteLine("  Message: {0}", ex.Message);
+
+                    // Attempt to roll back the transaction.
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+                        // This catch block will handle any errors that may have occurred
+                        // on the server that would cause the rollback to fail, such as
+                        // a closed connection.
+                        Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
+                        Console.WriteLine("  Message: {0}", ex2.Message);
+                    }
+                }
+
+                return false;
+            }
+        }
     }
 }
