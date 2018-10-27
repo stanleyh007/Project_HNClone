@@ -12,19 +12,9 @@ namespace Project_HNClone.Controllers
 {
     public class HomeController : Controller
     {
-        // Needed to read connectionstring
-        private readonly IConfiguration configuration;
-
-        public HomeController(IConfiguration config)
-        {
-            this.configuration = config;
-        }
 
         public IActionResult Index()
         {
-            // Test to see that it works and it does
-            test test = new test();
-            test.testCake(configuration.GetConnectionString("DefaultConnection"));
             return View();
         }
 
