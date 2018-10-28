@@ -15,17 +15,25 @@ namespace HNCloneApi.Controllers
     public class StoryController : ControllerBase
     {
         private readonly string _connectionString;
+        private readonly IHttpContextAccessor _accessor;
 
-        public StoryController(IConfiguration config)
+        public StoryController(IConfiguration config, IHttpContextAccessor accessor)
         {
             IConfiguration configuration = config;
             _connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            _accessor = accessor;
         }
 
         [Route("latest")]
         [HttpGet]
         public int Latest()
         {
+            if (!TestIp())
+            {
+                return int.MinValue;
+            }
+
             int storyLatest = 0;
             int commentLatest = 0;
 
@@ -70,19 +78,34 @@ namespace HNCloneApi.Controllers
 
         [Route("post")]
         [HttpPost]
-        public void Post([FromBody] StoryAndComment storyAndComment)
+        public IActionResult Post([FromBody] StoryAndComment storyAndComment)
         {
+            if (!TestIp())
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "403 Forbidden");
+            }
+
             if (storyAndComment.post_parent == -1)
             {
-                Story(storyAndComment);
+                bool success = Story(storyAndComment);
+                if (success)
+                {
+                    return Ok();
+                }
             }
             else
             {
-                Comment(storyAndComment);
+                bool success = Comment(storyAndComment);
+                if (success)
+                {
+                    return Ok();
+                }
             }
+
+            return StatusCode(StatusCodes.Status400BadRequest, "400 BadRequest");
         }
 
-        private void Story(StoryAndComment storyAndComment)
+        private bool Story(StoryAndComment storyAndComment)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -105,6 +128,8 @@ namespace HNCloneApi.Controllers
                     command.ExecuteNonQuery();
 
                     transaction.Commit();
+
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -120,10 +145,12 @@ namespace HNCloneApi.Controllers
                         // a closed connection.
                     }
                 }
+
+                return false;
             }
         }
 
-        private void Comment(StoryAndComment storyAndComment)
+        private bool Comment(StoryAndComment storyAndComment)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -143,6 +170,8 @@ namespace HNCloneApi.Controllers
                     command.ExecuteNonQuery();
 
                     transaction.Commit();
+
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -158,6 +187,8 @@ namespace HNCloneApi.Controllers
                         // a closed connection.
                     }
                 }
+
+                return false;
             }
         }
 
@@ -227,6 +258,12 @@ namespace HNCloneApi.Controllers
             }
 
             return -1;
+        }
+
+        private bool TestIp()
+        {
+            string ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            return ip == "46.101.225.71";
         }
     }
 }
