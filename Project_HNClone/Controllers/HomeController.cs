@@ -3,23 +3,31 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Project_HNClone.Models;
 
 namespace Project_HNClone.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly hnDatabaseContext _context;
+
+        public HomeController(hnDatabaseContext context)
         {
-            return View();
+          _context = context;
         }
 
-        public IActionResult Newest()
+        public async Task<IActionResult> Index()
         {
-            //ViewData["Message"] = "Your application description page.";
+          return View(await _context.Stories.ToListAsync());
+        }
 
-            return View();
+        public async Task<IActionResult> Newest()
+        {
+          //ViewData["Message"] = "Your application description page.";
+          return View(await _context.Stories.ToListAsync());
         }
 
         public IActionResult Show()
@@ -29,9 +37,9 @@ namespace Project_HNClone.Controllers
             return View();
         }
 
-        public IActionResult Newcomments()
+        public async Task<IActionResult> Newcomments()
         {
-            return View();
+          return View(await _context.Comments.ToListAsync());
         }
 
          public IActionResult Ask()
@@ -44,6 +52,7 @@ namespace Project_HNClone.Controllers
           return View();
         }
 
+        [Authorize]
         public IActionResult Submit()
         {
           return View();

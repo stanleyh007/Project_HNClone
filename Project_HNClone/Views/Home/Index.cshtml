@@ -1,7 +1,33 @@
-﻿@{
+﻿@model IEnumerable<Project_HNClone.Models.Stories>
+
+
+@{
   ViewData["Title"] = "Index";
 }
 
-<h2>@ViewData["Title"]</h2>
-
-<p>Load list here</p>
+<br />
+<table class="table" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    @foreach (var item in Model)
+    {
+    <tr>
+      <td style="font-size:11pt; border-top:none !important; padding:4px">
+        <a href="" style="text-decoration:none; color:inherit;">
+        @Html.DisplayFor(modelItem => item.Name)
+        @Html.DisplayFor(modelItem => item.Content)
+        </a>
+        <span style="font-size:8pt; color:grey;">
+        (<a href="" style="color:grey">@Html.DisplayFor(modelItem => item.PostUrl)</a>)</span>
+      </td>
+   </tr>
+      <tr>
+        <td style="font-size:9pt; border-top:none !important; color:gray; padding:4px">
+          <span><a href="" style="color: grey">@Html.DisplayFor(modelItem => item.Creator.Karma)</a> by</span>
+          <span><a href="" style="color: grey">@Html.DisplayFor(modelItem => item.CreatorName)</a></span>
+          <span><a href="" style="color: grey">@Html.DisplayFor(modelItem => item.PublishDate)</a></span>
+          <span><a href="" style="color: grey">@Html.DisplayFor(modelItem => item.Comments)</a></span>
+        </td>
+    </tr>
+    }
+  </tbody>
+</table>

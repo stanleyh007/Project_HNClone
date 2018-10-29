@@ -1,7 +1,32 @@
-﻿@{
-    ViewData["Title"] = "Newest";
-}
-<h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
+﻿@model IEnumerable<Project_HNClone.Models.Stories>
 
-<p>Load list of newest news</p>
+
+@{
+  ViewData["Title"] = "Newest";
+}
+<br />
+<table class="table" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    @foreach (var item in Model)
+    {
+      <tr>
+        <td style="font-size:11pt; border-top:none !important; padding:4px">
+          <a href="" style="text-decoration:none; color:inherit;">
+            @Html.DisplayFor(modelItem => item.Name)
+            @Html.DisplayFor(modelItem => item.Content)
+          </a>
+          <span style="font-size:8pt; color:grey;">
+            (<a href="" style="color:grey">@Html.DisplayFor(modelItem => item.PostUrl)</a>)
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td style="font-size:9pt; border-top:none !important; color:gray; padding:4px">
+          @Html.DisplayFor(modelItem => item.CreatorName)
+          @Html.DisplayFor(modelItem => item.PublishDate)
+          @Html.DisplayFor(modelItem => item.Comments)
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

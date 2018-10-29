@@ -1,7 +1,12 @@
 @{
-    ViewData["Title"] = "Submit";
+  ViewData["Title"] = "Submit";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2>Post new story</h2>
 
-<p>Submit a post, require login</p>
+<form action="/action_page.php" id="usrform">
+  Name: <input type="text" name="usrname">
+  <input type="submit">
+</form>
+<br>
+<textarea rows="4" cols="50" name="comment" form="usrform"></textarea>
