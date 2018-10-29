@@ -6,7 +6,7 @@
         public string name { get; set; }
         public string password { get; set; }
         public int karma { get; set; }
-        public string publishDate { get; set; }
+        public string creationDate { get; set; }
 
     }
 }

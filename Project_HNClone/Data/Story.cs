@@ -1,4 +1,6 @@
-﻿namespace Project_HNClone.Data
+﻿using System;
+
+namespace Project_HNClone.Data
 {
     public class Story
     {
@@ -11,7 +13,7 @@
         public string postURL { get; set; }
         public int positiveRating { get; set; }
         public int negativeRating { get; set; }
-        public string publishDate { get; set; }
+        public DateTime publishDate { get; set; }
 
     }
 }

@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Project_HNClone.Models;
+using Project_HNClone.Queries;
 
 namespace Project_HNClone.Controllers
 {
     public class HomeController : Controller
     {
+
         private readonly hnDatabaseContext _context;
 
         public HomeController(hnDatabaseContext context)
