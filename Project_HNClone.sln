@@ -6,7 +6,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project_HNClone", "Project_
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HNClone Tests", "HNClone Tests\HNClone Tests.csproj", "{6ECF2AC1-B1F1-48E8-BF55-9047DC7352B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HNCloneApi", "HNCloneApi\HNCloneApi.csproj", "{6268610A-C094-4300-A364-F8E94B11E16F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HNCloneApi", "HNCloneApi\HNCloneApi.csproj", "{6268610A-C094-4300-A364-F8E94B11E16F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

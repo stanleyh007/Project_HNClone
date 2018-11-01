@@ -162,10 +162,10 @@ namespace HNCloneApi.Controllers
 
                 try
                 {
-                    command.CommandText = "INSERT INTO Comments (Content, OwnerID, StoryID, hanesst_id) VALUES (@Content, @OwnerID, @StoryID, @hanesst_id);";
+                    command.CommandText = "INSERT INTO Comments (Content, OwnerID, parentHanesstId, hanesst_id) VALUES (@Content, @OwnerID, @parentHanesstId, @hanesst_id);";
                     command.Parameters.Add("@Content", SqlDbType.NVarChar).Value = storyAndComment.post_text;
                     command.Parameters.Add("@OwnerID", SqlDbType.Int).Value = UserId(storyAndComment.username, storyAndComment.pwd_hash);
-                    command.Parameters.Add("@StoryID", SqlDbType.Int).Value = storyAndComment.post_parent;
+                    command.Parameters.Add("@parentHanesstId", SqlDbType.Int).Value = storyAndComment.post_parent;
                     command.Parameters.Add("@hanesst_id", SqlDbType.Int).Value = storyAndComment.hanesst_id;
                     command.ExecuteNonQuery();
 

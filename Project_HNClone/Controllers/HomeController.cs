@@ -24,13 +24,13 @@ namespace Project_HNClone.Controllers
 
         public async Task<IActionResult> Index()
         {
-          return View(await _context.Stories.ToListAsync());
+          return View(await _context.Stories.Take(100).ToListAsync());
         }
 
         public async Task<IActionResult> Newest()
         {
           //ViewData["Message"] = "Your application description page.";
-          return View(await _context.Stories.ToListAsync());
+          return View(await _context.Stories.Take(100).ToListAsync());
         }
 
         public IActionResult Show()
@@ -42,7 +42,7 @@ namespace Project_HNClone.Controllers
 
         public async Task<IActionResult> Newcomments()
         {
-          return View(await _context.Comments.ToListAsync());
+          return View(await _context.Comments.Take(100).ToListAsync());
         }
 
          public IActionResult Ask()
