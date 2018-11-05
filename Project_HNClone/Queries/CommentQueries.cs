@@ -55,7 +55,7 @@ namespace Project_HNClone.Queries
             return verified;
         }
 
-        public List<Comment> GetComments(int storyID)
+        public List<Comment> GetComments()
         {
             List<Comment> comments = new List<Comment>();
             Comment temp = new Comment();
@@ -67,7 +67,42 @@ namespace Project_HNClone.Queries
 
                 try
                 {
-                    command.CommandText = "SELECT * FROM Comments WHERE Comments.StoryID = @STORYID";
+                    command.CommandText = "SELECT * FROM Comments ORDER BY PublishDate DESC";
+
+                    connection.Open();
+                    reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        temp.content = (string)reader["Content"];
+                        temp.ownerID = (int)reader["OwnerID"];
+                        temp.storyID = (int)reader["StoryID"];
+                        temp.publishDate = (String)reader["PublishDate"];
+                        comments.Add(temp);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    // ignored
+                }
+                return comments;
+            }
+        }
+
+        public List<Comment> GetCommentsFromStory(int storyID)
+        {
+            List<Comment> comments = new List<Comment>();
+            Comment temp = new Comment();
+            using (SqlConnection connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                SqlCommand command = new SqlCommand();
+                SqlDataReader reader;
+                command.Connection = connection;
+                
+                try
+                {
+                    command.CommandText = "SELECT * FROM Comments WHERE Comments.StoryID = @STORYID ORDER BY PublishDate DESC";
                     command.Parameters.Add("@STORYID", SqlDbType.NVarChar).Value = storyID;
 
                     connection.Open();
