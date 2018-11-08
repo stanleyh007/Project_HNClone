@@ -4,12 +4,12 @@ phases:
     commands:
       - echo Restore started on `date`
       - dotnet restore Project_HNClone/Project_HNClone.csproj
-      - dotnet restore Project_HNClone/HNCloneApi.csproj
+      - dotnet restore HNCloneApi/HNCloneApi.csproj
   build:
     commands:
       - echo Build started on `date`
       - dotnet publish -c release -o ./build_output Project_HNClone/Project_HNClone.csproj
-      - dotnet publish -c release -o ./build_output Project_HNClone/HNCloneApi.csproj
+      - dotnet publish -c release -o ./build_output HNCloneApi/HNCloneApi.csproj
 artifacts:
   files:
     - Project_HNClone/build_output/**/*
