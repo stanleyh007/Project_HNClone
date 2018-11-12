@@ -8,6 +8,7 @@ using HNCloneApi.data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Logging;
 
 namespace HNCloneApi.Controllers
 {
@@ -31,6 +32,13 @@ namespace HNCloneApi.Controllers
         {
             if (!TestIp())
             {
+                Log log = new Log
+                {
+                    HttpStatusCode = 403,
+                    Message = "Latest from invalid IP"
+                };
+                LogSql(log);
+
                 return int.MinValue;
             }
 
@@ -59,8 +67,12 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
-                    Console.WriteLine("  Message: {0}", ex.Message);
+                    Log log = new Log
+                    {
+                        HttpStatusCode = 400,
+                        Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
+                    };
+                    LogSql(log);
                 }
             }
 
@@ -82,6 +94,13 @@ namespace HNCloneApi.Controllers
         {
             if (!TestIp())
             {
+                Log log = new Log
+                {
+                    HttpStatusCode = 403,
+                    Message = "Post from invalid IP"
+                };
+                LogSql(log);
+
                 return StatusCode(StatusCodes.Status403Forbidden, "403 Forbidden");
             }
 
@@ -101,6 +120,16 @@ namespace HNCloneApi.Controllers
                     return Ok();
                 }
             }
+
+            string jsonStoryAndComment = Newtonsoft.Json.JsonConvert.SerializeObject(storyAndComment);
+
+            Log log2 = new Log
+            {
+                Username = storyAndComment.username,
+                HttpStatusCode = 400,
+                Message = "Post bad request: " + jsonStoryAndComment
+            };
+            LogSql(log2);
 
             return StatusCode(StatusCodes.Status400BadRequest, "400 BadRequest");
         }
@@ -133,6 +162,13 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
+                    Log log = new Log
+                    {
+                        HttpStatusCode = 400,
+                        Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
+                    };
+                    LogSql(log);
+
                     // Attempt to roll back the transaction.
                     try
                     {
@@ -140,6 +176,13 @@ namespace HNCloneApi.Controllers
                     }
                     catch (Exception ex2)
                     {
+                        Log log2 = new Log
+                        {
+                            HttpStatusCode = 400,
+                            Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
+                        };
+                        LogSql(log2);
+
                         // This catch block will handle any errors that may have occurred
                         // on the server that would cause the rollback to fail, such as
                         // a closed connection.
@@ -175,6 +218,13 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
+                    Log log = new Log
+                    {
+                        HttpStatusCode = 400,
+                        Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
+                    };
+                    LogSql(log);
+
                     // Attempt to roll back the transaction.
                     try
                     {
@@ -182,6 +232,13 @@ namespace HNCloneApi.Controllers
                     }
                     catch (Exception ex2)
                     {
+                        Log log2 = new Log
+                        {
+                            HttpStatusCode = 400,
+                            Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
+                        };
+                        LogSql(log2);
+
                         // This catch block will handle any errors that may have occurred
                         // on the server that would cause the rollback to fail, such as
                         // a closed connection.
@@ -247,8 +304,12 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
-                    Console.WriteLine("  Message: {0}", ex.Message);
+                    Log log = new Log
+                    {
+                        HttpStatusCode = 400,
+                        Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
+                    };
+                    LogSql(log);
                 }
             }
 
@@ -264,6 +325,48 @@ namespace HNCloneApi.Controllers
         {
             string ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             return ip == "46.101.225.71";
+        }
+
+        private void LogSql(Log log)
+        {
+            log.IpAddress = log.IpAddress = _accessor.HttpContext.Connection.RemoteIpAddress;
+            log.DateTime = DateTime.Now;
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction = connection.BeginTransaction();
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = "INSERT INTO log (ipaddress, username, datetime, httpstatuscode, message) VALUES (@ipaddress, @username, @datetime, @httpstatuscode, @message)";
+                    command.Parameters.Add("@ipaddress", SqlDbType.NVarChar).Value = log.IpAddress;
+                    command.Parameters.Add("@username", SqlDbType.NVarChar).Value = log.Username;
+                    command.Parameters.Add("@datetime", SqlDbType.DateTime).Value = log.DateTime;
+                    command.Parameters.Add("@httpstatuscode", SqlDbType.Int).Value = log.HttpStatusCode;
+                    command.Parameters.Add("@message", SqlDbType.NVarChar).Value = log.Message;
+                    command.ExecuteNonQuery();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    // Attempt to roll back the transaction.
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+                        // This catch block will handle any errors that may have occurred
+                        // on the server that would cause the rollback to fail, such as
+                        // a closed connection.
+                    }
+                }
+            }
         }
     }
 }
