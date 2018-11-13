@@ -152,17 +152,17 @@ namespace Project_HNClone.Queries
 
                     try
                     {
-                        if (postType == "new")
+                        if (postType.ToLower() == "new")
                         {
-                            command.CommandText = "select top @amount * from Stories order by PublishDate desc";
+                            command.CommandText = "select top (@amount) * from Stories order by PublishDate desc";
                             command.Parameters.AddWithValue("@amount", amount);
                         }
 
                         else
                         {
-                            command.CommandText = "select top @amount * from Stories where PostType = @PostType order by PublishDate desc";
+                            command.CommandText = "select top (@amount) * from Stories where PostType = @PostType order by PublishDate desc";
                             command.Parameters.AddWithValue("@amount", amount);
-                            command.Parameters.AddWithValue("@PostType", postType);
+                            command.Parameters.AddWithValue("@PostType", postType.ToLower());
                         }
 
                         connection.Open();
