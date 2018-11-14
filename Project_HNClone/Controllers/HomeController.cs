@@ -17,9 +17,12 @@ namespace Project_HNClone.Controllers
     {
         private readonly IConfiguration configuration;
 
-        public HomeController(IConfiguration config)
+        private readonly hnDatabaseContext _context;
+
+        public HomeController(IConfiguration config, hnDatabaseContext context)
         {
             this.configuration = config;
+            _context = context;
         }
 
         public IActionResult Index(int? page)
@@ -27,19 +30,18 @@ namespace Project_HNClone.Controllers
             StoryQueries storyQueries = new StoryQueries(configuration);
             ModelState.Clear();
 
-            var storyIndex = storyQueries.GetStories(10000, "story"); 
+            var storyIndex = storyQueries.GetStories(100, "story"); 
             var pageNumber = page ?? 1; 
             var onePageOfStories = storyIndex.ToPagedList(pageNumber, 100); 
 
             ViewBag.OnePageOfStories = onePageOfStories;
+
             return View();
         }
 
-        public IActionResult Newest()
+        public async Task<IActionResult> Newest()
         {
-            StoryQueries storyQueries = new StoryQueries(configuration);
-            ModelState.Clear();
-            return View(storyQueries.GetStories(100, "new"));
+            return View(await _context.Stories.Take(100).ToListAsync());
         }
 
         public IActionResult Show()
