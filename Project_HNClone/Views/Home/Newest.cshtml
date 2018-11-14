@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Project_HNClone.Models.Stories>
+﻿@model IEnumerable<Project_HNClone.Data.Story>
 
 
 @{
@@ -12,21 +12,21 @@
       <tr>
         <td style="font-size:11pt; border-top:none !important; padding:4px">
           <a href="" style="text-decoration:none; color:inherit;">
-            @Html.DisplayFor(modelItem => item.Name)
-            @Html.DisplayFor(modelItem => item.Content)
+            @Html.DisplayFor(modelItem => item.name)
+            @Html.DisplayFor(modelItem => item.content)
           </a>
           <span style="font-size:8pt; color:grey;">
-            (<a href="" style="color:grey">@Html.DisplayFor(modelItem => item.PostUrl)</a>)
+            (<a href="" style="color:grey">@Html.DisplayFor(modelItem => item.postURL)</a>)
           </span>
         </td>
       </tr>
       <tr>
-        <td style="font-size:9pt; border-top:none !important; color:gray; padding:4px">
-          @Html.DisplayFor(modelItem => item.CreatorName)
-          @Html.DisplayFor(modelItem => item.PublishDate)
-          @Html.DisplayFor(modelItem => item.Comments)
-        </td>
-      </tr>
-    }
-  </tbody>
-</table>
+          <td style="font-size:9pt; border-top:none !important; color:gray; padding:4px">
+              @Html.DisplayFor(modelItem => item.creatorName)
+              @Html.DisplayFor(modelItem => item.publishDate)
+              <!--Html.DisplayFor(modelItem => item.Comment)-->
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>

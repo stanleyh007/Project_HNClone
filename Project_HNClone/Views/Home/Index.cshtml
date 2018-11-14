@@ -1,33 +1,38 @@
-﻿@model IEnumerable<Project_HNClone.Models.Stories>
+﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList;
 
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
-  ViewData["Title"] = "Index";
+    ViewData["Title"] = "Index";
 }
 
 <br />
 <table class="table" border="0" cellspacing="0" cellpadding="0">
-  <tbody>
-    @foreach (var item in Model)
-    {
-    <tr>
-      <td style="font-size:11pt; border-top:none !important; padding:4px">
-        <a href="" style="text-decoration:none; color:inherit;">
-        @Html.DisplayFor(modelItem => item.Name)
-        @Html.DisplayFor(modelItem => item.Content)
-        </a>
-        <span style="font-size:8pt; color:grey;">
-        (<a href="@item.PostUrl" style="color:grey">@Html.DisplayFor(modelItem => item.PostUrl)</a>)</span>
-      </td>
-   </tr>
-      <tr>
-        <td style="font-size:9pt; border-top:none !important; color:gray; padding:4px">
-          <span><a href="" style="color: grey">@Html.DisplayFor(modelItem => item.Creator.Karma)</a> by</span>
-          <span><a href="" style="color: grey">@Html.DisplayFor(modelItem => item.CreatorName)</a></span>
-          <span><a href="" style="color: grey">@Html.DisplayFor(modelItem => item.PublishDate)</a></span>
-          <span><a href="" style="color: grey">@Html.DisplayFor(modelItem => item.Comments)</a></span>
-        </td>
-    </tr>
-    }
-  </tbody>
+    <tbody>
+        @foreach (var item in ViewBag.OnePageOfStories)
+        {
+            <tr>
+                <td style="font-size:11pt; border-top:none !important; padding:4px">
+                    <a href="" style="text-decoration:none; color:inherit;">
+                        @item.name
+                        @item.content
+                    </a>
+                    <span style="font-size:8pt; color:grey;">
+                        (<a href="@item.postURL" style="color:grey">@item.postURL</a>)
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size:9pt; border-top:none !important; color:gray; padding:4px">
+                    <!--<span><a href="" style="color: grey">item.Creator.karma</a> by</span>-->
+                    <span><a href="" style="color: grey">@item.creatorName</a></span>
+                    <span><a href="" style="color: grey">@item.publishDate</a></span>
+                    <!--<span><a href="" style="color: grey">item.Comment</a></span>-->
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
+
+@Html.PagedListPager((IPagedList)ViewBag.OnePageOfStories, page => Url.Action("Index", new { page }))

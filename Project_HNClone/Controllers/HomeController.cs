@@ -9,40 +9,49 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Project_HNClone.Models;
 using Project_HNClone.Queries;
+using X.PagedList;
 
 namespace Project_HNClone.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IConfiguration configuration;
 
-        private readonly hnDatabaseContext _context;
-
-        public HomeController(hnDatabaseContext context)
+        public HomeController(IConfiguration config)
         {
-          _context = context;
+            this.configuration = config;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index(int? page)
         {
-          return View(await _context.Stories.Take(100).ToListAsync());
+            StoryQueries storyQueries = new StoryQueries(configuration);
+            ModelState.Clear();
+
+            var storyIndex = storyQueries.GetStories(10000, "story"); 
+            var pageNumber = page ?? 1; 
+            var onePageOfStories = storyIndex.ToPagedList(pageNumber, 100); 
+
+            ViewBag.OnePageOfStories = onePageOfStories;
+            return View();
         }
 
-        public async Task<IActionResult> Newest()
+        public IActionResult Newest()
         {
-          //ViewData["Message"] = "Your application description page.";
-          return View(await _context.Stories.Take(100).ToListAsync());
+            StoryQueries storyQueries = new StoryQueries(configuration);
+            ModelState.Clear();
+            return View(storyQueries.GetStories(100, "new"));
         }
 
         public IActionResult Show()
         {
-            //ViewData["Message"] = "Your contact page.";
-
             return View();
         }
 
-        public async Task<IActionResult> Newcomments()
+        public IActionResult Newcomments()
         {
-          return View(await _context.Comments.Take(100).ToListAsync());
+            CommentQueries commentQueries = new CommentQueries(configuration);
+            ModelState.Clear();
+            return View(commentQueries.GetComments());
         }
 
          public IActionResult Ask()
@@ -52,49 +61,49 @@ namespace Project_HNClone.Controllers
 
         public IActionResult Jobs()
         {
-          return View();
+            return View();
         }
 
         [Authorize]
         public IActionResult Submit()
         {
-          return View();
+            return View();
         }
 
         public IActionResult NewsGuidelines()
         {
-          return View();
+            return View();
         }
 
 
         public IActionResult Newsfaq()
         {
-          return View();
+            return View();
         }
 
         public IActionResult Security()
         {
-          return View();
+            return View();
         }
 
         public IActionResult Lists()
         {
-          return View();
+            return View();
         }
 
         public IActionResult Bookmarklet()
         {
-          return View();
+            return View();
         }
 
         public IActionResult Legal()
         {
-          return View();
+            return View();
         }
 
         public IActionResult Apply()
         {
-          return View();
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

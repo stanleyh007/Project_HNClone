@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Project_HNClone.Models.Comments>
+﻿@model IEnumerable<Project_HNClone.Data.Comment>
 
 
 @{
@@ -12,24 +12,24 @@
       <tr>
         <td style="font-size:10pt; border-top:none !important; padding:4px">
           <div style="margin-top:2px; margin-bottom:-10px">
-            <span>
-              <a href="" style="color:grey">@Html.DisplayFor(modelItem => item.Owner.Name)</a>
-            </span>
-            <span>
-              <a href="" style="color:grey">@Html.DisplayFor(modelItem => item.PublishDate)</a>
-            </span>
-            <span>
-              <a href="" style="color:grey">@Html.DisplayFor(modelItem => item.Story.PostUrl)</a>
-            </span>
-          </div>
-          <br />
-          <div>
-            <span>
-              @Html.DisplayFor(modelItem => item.Content)
-            </span>
-          </div>
-        </td>
-      </tr>
-    }
-  </tbody>
-</table>
+              <span>
+                  <!--<a href="" style="color:grey">Html.DisplayFor(modelItem => item.Owner.name)</a>-->
+                </span>
+                <span>
+                  <a href="" style="color:grey">@Html.DisplayFor(modelItem => item.publishDate)</a>
+                </span>
+                <span>
+                  <!--<a href="" style="color:grey">Html.DisplayFor(modelItem => item.Story.postURL)</a>-->
+                </span>
+              </div>
+              <br />
+              <div>
+                <span>
+                  @Html.DisplayFor(modelItem => item.content)
+                </span>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
