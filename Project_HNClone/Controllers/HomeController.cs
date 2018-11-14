@@ -34,9 +34,10 @@ namespace Project_HNClone.Controllers
             StoryQueries storyQueries = new StoryQueries(configuration);
 
             IPagedList<Data.Story> cacheEntry;
+            string cacheKey = System.Reflection.MethodBase.GetCurrentMethod().Name;
 
             // Look for cache key.
-            if (!_cache.TryGetValue(CacheKeys.Entry, out cacheEntry))
+            if (!_cache.TryGetValue(cacheKey, out cacheEntry))
             {
                 // Key not in cache, so get data.
                 var storyIndex = storyQueries.GetStories(100, "story");
@@ -49,7 +50,7 @@ namespace Project_HNClone.Controllers
                     .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
 
                 // Save data in cache.
-                _cache.Set(CacheKeys.Entry, cacheEntry, cacheEntryOptions);
+                _cache.Set(cacheKey, cacheEntry, cacheEntryOptions);
             }
 
             ModelState.Clear();
@@ -61,7 +62,25 @@ namespace Project_HNClone.Controllers
 
         public async Task<IActionResult> Newest()
         {
-            return View(await _context.Stories.Take(100).ToListAsync());
+            List<Stories> cacheEntry;
+            string cacheKey = System.Reflection.MethodBase.GetCurrentMethod().Name;
+
+            // Look for cache key.
+            if (!_cache.TryGetValue(cacheKey, out cacheEntry))
+            {
+                // Key not in cache, so get data.
+                cacheEntry = await _context.Stories.Take(100).ToListAsync();
+
+                // Set cache options.
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    // Keep in cache for this time.
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+
+                // Save data in cache.
+                _cache.Set(cacheKey, cacheEntry, cacheEntryOptions);
+            }
+
+            return View(cacheEntry);
         }
 
         public IActionResult Show()
@@ -74,9 +93,10 @@ namespace Project_HNClone.Controllers
             CommentQueries commentQueries = new CommentQueries(configuration);
 
             List<Data.Comment> cacheEntry;
+            string cacheKey = System.Reflection.MethodBase.GetCurrentMethod().Name;
 
             // Look for cache key.
-            if (!_cache.TryGetValue(CacheKeys.Entry, out cacheEntry))
+            if (!_cache.TryGetValue(cacheKey, out cacheEntry))
             {
                 // Key not in cache, so get data.
                 cacheEntry = commentQueries.GetComments();
@@ -87,7 +107,7 @@ namespace Project_HNClone.Controllers
                     .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
 
                 // Save data in cache.
-                _cache.Set(CacheKeys.Entry, cacheEntry, cacheEntryOptions);
+                _cache.Set(cacheKey, cacheEntry, cacheEntryOptions);
             }
 
             ModelState.Clear();
