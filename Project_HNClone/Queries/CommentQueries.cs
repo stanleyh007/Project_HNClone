@@ -77,8 +77,11 @@ namespace Project_HNClone.Queries
                     {
                         temp.content = (string)reader["Content"];
                         temp.ownerID = (int)reader["OwnerID"];
-                        temp.storyID = (int)reader["StoryID"];
-                        temp.publishDate = (String)reader["PublishDate"];
+                        if (reader["StoryID"].GetType() != typeof(DBNull))
+                        {
+                            temp.storyID = (int)reader["StoryID"];
+                        }
+                        temp.publishDate = (DateTime)reader["PublishDate"];
                         comments.Add(temp);
                     }
 
@@ -114,7 +117,7 @@ namespace Project_HNClone.Queries
                         temp.content = (string)reader["Content"];
                         temp.ownerID = (int)reader["OwnerID"];
                         temp.storyID = (int)reader["StoryID"];
-                        temp.publishDate = (String)reader["PublishDate"];
+                        temp.publishDate = (DateTime)reader["PublishDate"];
                         comments.Add(temp);
                     }
 

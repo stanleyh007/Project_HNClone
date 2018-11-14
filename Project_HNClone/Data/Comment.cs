@@ -1,3 +1,5 @@
+using System;
+
 namespace Project_HNClone.Data
 {
     public class Comment
@@ -6,6 +8,6 @@ namespace Project_HNClone.Data
         public string content { get; set; }
         public int ownerID { get; set; }
         public int storyID { get; set; }
-        public string publishDate { get; set; }
+        public DateTime publishDate { get; set; }
     }
 }

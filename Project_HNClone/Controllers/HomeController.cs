@@ -99,7 +99,7 @@ namespace Project_HNClone.Controllers
             if (!_cache.TryGetValue(cacheKey, out cacheEntry))
             {
                 // Key not in cache, so get data.
-                cacheEntry = commentQueries.GetComments();
+                cacheEntry = commentQueries.GetComments(100);
 
                 // Set cache options.
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
