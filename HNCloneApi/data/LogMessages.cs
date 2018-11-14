@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HNCloneApi.data
 {
-    public class Log
+    public class LogMessages
     {
         public IPAddress IpAddress { get; set; }
         public string Username { get; set; }

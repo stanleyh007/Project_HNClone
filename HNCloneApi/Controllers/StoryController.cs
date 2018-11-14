@@ -32,7 +32,7 @@ namespace HNCloneApi.Controllers
         {
             if (!TestIp())
             {
-                Log log = new Log
+                LogMessages log = new LogMessages
                 {
                     HttpStatusCode = 403,
                     Message = "Latest from invalid IP"
@@ -67,12 +67,12 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    Log log = new Log
+                    LogMessages logMessages = new LogMessages
                     {
                         HttpStatusCode = 400,
                         Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
                     };
-                    LogSql(log);
+                    LogSql(logMessages);
                 }
             }
 
@@ -94,7 +94,7 @@ namespace HNCloneApi.Controllers
         {
             if (!TestIp())
             {
-                Log log = new Log
+                LogMessages log = new LogMessages
                 {
                     HttpStatusCode = 403,
                     Message = "Post from invalid IP"
@@ -123,7 +123,7 @@ namespace HNCloneApi.Controllers
 
             string jsonStoryAndComment = Newtonsoft.Json.JsonConvert.SerializeObject(storyAndComment);
 
-            Log log2 = new Log
+            LogMessages log2 = new LogMessages
             {
                 Username = storyAndComment.username,
                 HttpStatusCode = 400,
@@ -162,7 +162,7 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    Log log = new Log
+                    LogMessages log = new LogMessages
                     {
                         HttpStatusCode = 400,
                         Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
@@ -176,7 +176,7 @@ namespace HNCloneApi.Controllers
                     }
                     catch (Exception ex2)
                     {
-                        Log log2 = new Log
+                        LogMessages log2 = new LogMessages
                         {
                             HttpStatusCode = 400,
                             Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
@@ -218,7 +218,7 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    Log log = new Log
+                    LogMessages log = new LogMessages
                     {
                         HttpStatusCode = 400,
                         Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
@@ -232,7 +232,7 @@ namespace HNCloneApi.Controllers
                     }
                     catch (Exception ex2)
                     {
-                        Log log2 = new Log
+                        LogMessages log2 = new LogMessages
                         {
                             HttpStatusCode = 400,
                             Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
@@ -304,7 +304,7 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    Log log = new Log
+                    LogMessages log = new LogMessages
                     {
                         HttpStatusCode = 400,
                         Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
@@ -327,10 +327,10 @@ namespace HNCloneApi.Controllers
             return ip == "46.101.225.71";
         }
 
-        private void LogSql(Log log)
+        private void LogSql(LogMessages logMessages)
         {
-            log.IpAddress = log.IpAddress = _accessor.HttpContext.Connection.RemoteIpAddress;
-            log.DateTime = DateTime.Now;
+            logMessages.IpAddress = logMessages.IpAddress = _accessor.HttpContext.Connection.RemoteIpAddress;
+            logMessages.DateTime = DateTime.Now;
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -342,12 +342,12 @@ namespace HNCloneApi.Controllers
 
                 try
                 {
-                    command.CommandText = "INSERT INTO log (ipaddress, username, datetime, httpstatuscode, message) VALUES (@ipaddress, @username, @datetime, @httpstatuscode, @message)";
-                    command.Parameters.Add("@ipaddress", SqlDbType.NVarChar).Value = log.IpAddress;
-                    command.Parameters.Add("@username", SqlDbType.NVarChar).Value = log.Username;
-                    command.Parameters.Add("@datetime", SqlDbType.DateTime).Value = log.DateTime;
-                    command.Parameters.Add("@httpstatuscode", SqlDbType.Int).Value = log.HttpStatusCode;
-                    command.Parameters.Add("@message", SqlDbType.NVarChar).Value = log.Message;
+                    command.CommandText = "INSERT INTO logmessages (ipaddress, username, datetime, httpstatuscode, message) VALUES (@ipaddress, @username, @datetime, @httpstatuscode, @message)";
+                    command.Parameters.Add("@ipaddress", SqlDbType.NVarChar).Value = logMessages.IpAddress;
+                    command.Parameters.Add("@username", SqlDbType.NVarChar).Value = logMessages.Username;
+                    command.Parameters.Add("@datetime", SqlDbType.DateTime).Value = logMessages.DateTime;
+                    command.Parameters.Add("@httpstatuscode", SqlDbType.Int).Value = logMessages.HttpStatusCode;
+                    command.Parameters.Add("@message", SqlDbType.NVarChar).Value = logMessages.Message;
                     command.ExecuteNonQuery();
 
                     transaction.Commit();
