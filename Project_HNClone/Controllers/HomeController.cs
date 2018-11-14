@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Project_HNClone.Models;
 using Project_HNClone.Queries;
@@ -19,22 +20,41 @@ namespace Project_HNClone.Controllers
 
         private readonly hnDatabaseContext _context;
 
-        public HomeController(IConfiguration config, hnDatabaseContext context)
+        private IMemoryCache _cache;
+
+        public HomeController(IConfiguration config, hnDatabaseContext context, IMemoryCache memoryCache)
         {
             this.configuration = config;
             _context = context;
+            _cache = memoryCache;
         }
 
         public IActionResult Index(int? page)
         {
             StoryQueries storyQueries = new StoryQueries(configuration);
+
+            IPagedList<Data.Story> cacheEntry;
+
+            // Look for cache key.
+            if (!_cache.TryGetValue(CacheKeys.Entry, out cacheEntry))
+            {
+                // Key not in cache, so get data.
+                var storyIndex = storyQueries.GetStories(100, "story");
+                var pageNumber = page ?? 1;
+                cacheEntry = storyIndex.ToPagedList(pageNumber, 100);
+
+                // Set cache options.
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    // Keep in cache for this time.
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+
+                // Save data in cache.
+                _cache.Set(CacheKeys.Entry, cacheEntry, cacheEntryOptions);
+            }
+
             ModelState.Clear();
 
-            var storyIndex = storyQueries.GetStories(100, "story"); 
-            var pageNumber = page ?? 1; 
-            var onePageOfStories = storyIndex.ToPagedList(pageNumber, 100); 
-
-            ViewBag.OnePageOfStories = onePageOfStories;
+            ViewBag.OnePageOfStories = cacheEntry;
 
             return View();
         }
@@ -52,8 +72,26 @@ namespace Project_HNClone.Controllers
         public IActionResult Newcomments()
         {
             CommentQueries commentQueries = new CommentQueries(configuration);
+
+            List<Data.Comment> cacheEntry;
+
+            // Look for cache key.
+            if (!_cache.TryGetValue(CacheKeys.Entry, out cacheEntry))
+            {
+                // Key not in cache, so get data.
+                cacheEntry = commentQueries.GetComments();
+
+                // Set cache options.
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    // Keep in cache for this time.
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+
+                // Save data in cache.
+                _cache.Set(CacheKeys.Entry, cacheEntry, cacheEntryOptions);
+            }
+
             ModelState.Clear();
-            return View(commentQueries.GetComments());
+            return View(cacheEntry);
         }
 
          public IActionResult Ask()
@@ -113,5 +151,19 @@ namespace Project_HNClone.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+    }
+
+    public static class CacheKeys
+    {
+        public static string Entry { get { return "_Entry"; } }
+        public static string CallbackEntry { get { return "_Callback"; } }
+        public static string CallbackMessage { get { return "_CallbackMessage"; } }
+        public static string Parent { get { return "_Parent"; } }
+        public static string Child { get { return "_Child"; } }
+        public static string DependentMessage { get { return "_DependentMessage"; } }
+        public static string DependentCTS { get { return "_DependentCTS"; } }
+        public static string Ticks { get { return "_Ticks"; } }
+        public static string CancelMsg { get { return "_CancelMsg"; } }
+        public static string CancelTokenSource { get { return "_CancelTokenSource"; } }
     }
 }

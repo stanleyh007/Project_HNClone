@@ -37,6 +37,8 @@ namespace Project_HNClone
             services.AddDbContext<hnDatabaseContext>(options =>
              options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddMemoryCache();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
