@@ -55,7 +55,7 @@ namespace Project_HNClone.Queries
             return verified;
         }
 
-        public List<Comment> GetComments()
+        public List<Comment> GetComments(int amount)
         {
             List<Comment> comments = new List<Comment>();
             Comment temp = new Comment();
@@ -67,7 +67,8 @@ namespace Project_HNClone.Queries
 
                 try
                 {
-                    command.CommandText = "SELECT * FROM Comments ORDER BY PublishDate DESC";
+                    command.CommandText = "SELECT TOP (@AMOUNT) * FROM Comments ORDER BY PublishDate DESC";
+                    command.Parameters.AddWithValue("@AMOUNT", amount);
 
                     connection.Open();
                     reader = command.ExecuteReader();
