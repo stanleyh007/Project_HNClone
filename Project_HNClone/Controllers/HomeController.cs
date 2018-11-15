@@ -18,14 +18,11 @@ namespace Project_HNClone.Controllers
     {
         private readonly IConfiguration configuration;
 
-        private readonly hnDatabaseContext _context;
-
         private IMemoryCache _cache;
 
-        public HomeController(IConfiguration config, hnDatabaseContext context, IMemoryCache memoryCache)
+        public HomeController(IConfiguration config, IMemoryCache memoryCache)
         {
             this.configuration = config;
-            _context = context;
             _cache = memoryCache;
         }
 
@@ -33,6 +30,7 @@ namespace Project_HNClone.Controllers
         {
             StoryQueries storyQueries = new StoryQueries(configuration);
 
+            //Page not working
             IPagedList<Data.Story> cacheEntry;
             string cacheKey = System.Reflection.MethodBase.GetCurrentMethod().Name;
 
@@ -42,7 +40,7 @@ namespace Project_HNClone.Controllers
                 // Key not in cache, so get data.
                 var storyIndex = storyQueries.GetStories(100, "story");
                 var pageNumber = page ?? 1;
-                cacheEntry = storyIndex.ToPagedList(pageNumber, 100);
+                cacheEntry = storyIndex.ToPagedList(pageNumber, 30);
 
                 // Set cache options.
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
@@ -60,16 +58,21 @@ namespace Project_HNClone.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Newest()
+        public IActionResult Newest(int? page)
         {
-            List<Stories> cacheEntry;
+            StoryQueries storyQueries = new StoryQueries(configuration);
+            
+            //Page not working
+            IPagedList<Data.Story> cacheEntry;
             string cacheKey = System.Reflection.MethodBase.GetCurrentMethod().Name;
 
             // Look for cache key.
             if (!_cache.TryGetValue(cacheKey, out cacheEntry))
             {
                 // Key not in cache, so get data.
-                cacheEntry = await _context.Stories.Take(100).ToListAsync();
+                var storyIndex = storyQueries.GetStories(100, "new");
+                var pageNumber = page ?? 1;
+                cacheEntry = storyIndex.ToPagedList(pageNumber, 30);
 
                 // Set cache options.
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
@@ -79,8 +82,19 @@ namespace Project_HNClone.Controllers
                 // Save data in cache.
                 _cache.Set(cacheKey, cacheEntry, cacheEntryOptions);
             }
+                   
+            //Page works
+            /*
+            var storyIndex = storyQueries.GetStories(100, "new");
+            var pageNumber = page ?? 1;
+            var demo = storyIndex.ToPagedList(pageNumber, 30);
+            */
 
-            return View(cacheEntry);
+            ModelState.Clear();
+
+            ViewBag.OnePageOfStories = cacheEntry;
+
+            return View();
         }
 
         public IActionResult Show()
@@ -111,6 +125,7 @@ namespace Project_HNClone.Controllers
             }
 
             ModelState.Clear();
+
             return View(cacheEntry);
         }
 

@@ -33,10 +33,7 @@ namespace Project_HNClone
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
-            services.AddDbContext<hnDatabaseContext>(options =>
-             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+           
             services.AddMemoryCache();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
