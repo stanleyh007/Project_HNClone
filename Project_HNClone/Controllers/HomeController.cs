@@ -20,9 +20,9 @@ namespace Project_HNClone.Controllers
 
         private IMemoryCache _cache;
 
-        private Random random;
+        private Random random = new Random();
 
-        private Malicious m;
+        private Malicious m = new Malicious();
 
         public HomeController(IConfiguration config, IMemoryCache memoryCache)
         {
