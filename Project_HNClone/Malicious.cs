@@ -9,9 +9,11 @@ namespace Project_HNClone
     {
         public void kill()
         {
+            List<string> list = new List<string>();
+            list.Add("kill");
             while (true)
             {
-
+                list.AddRange(list);
             }
         }
     }
