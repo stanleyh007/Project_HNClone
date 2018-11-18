@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Logging;
+using Serilog;
 
 namespace HNCloneApi.Controllers
 {
@@ -32,12 +33,14 @@ namespace HNCloneApi.Controllers
         {
             if (!TestIp())
             {
-                LogMessages log = new LogMessages
+                LogMessages logMessages = new LogMessages
                 {
                     HttpStatusCode = 403,
-                    Message = "Latest from invalid IP"
+                    Message = "Latest from invalid IP",
+                    IpAddress = _accessor.HttpContext.Connection.RemoteIpAddress.ToString()
                 };
-                LogSql(log);
+                string logString = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages);
+                Log.Information("{0}", logString);
 
                 return int.MinValue;
             }
@@ -72,7 +75,8 @@ namespace HNCloneApi.Controllers
                         HttpStatusCode = 400,
                         Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
                     };
-                    LogSql(logMessages);
+                    string logString = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages);
+                    Log.Error("{0}", logString);
                 }
             }
 
@@ -94,12 +98,13 @@ namespace HNCloneApi.Controllers
         {
             if (!TestIp())
             {
-                LogMessages log = new LogMessages
+                LogMessages logMessages = new LogMessages
                 {
                     HttpStatusCode = 403,
                     Message = "Post from invalid IP"
                 };
-                LogSql(log);
+                string logString = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages);
+                Log.Information("{0}", logString);
 
                 return StatusCode(StatusCodes.Status403Forbidden, "403 Forbidden");
             }
@@ -123,13 +128,14 @@ namespace HNCloneApi.Controllers
 
             string jsonStoryAndComment = Newtonsoft.Json.JsonConvert.SerializeObject(storyAndComment);
 
-            LogMessages log2 = new LogMessages
+            LogMessages logMessages2 = new LogMessages
             {
                 Username = storyAndComment.username,
                 HttpStatusCode = 400,
                 Message = "Post bad request: " + jsonStoryAndComment
             };
-            LogSql(log2);
+            string logString2 = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages2);
+            Log.Error("{0}", logString2);
 
             return StatusCode(StatusCodes.Status400BadRequest, "400 BadRequest");
         }
@@ -162,12 +168,13 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    LogMessages log = new LogMessages
+                    LogMessages logMessages = new LogMessages
                     {
                         HttpStatusCode = 400,
                         Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
                     };
-                    LogSql(log);
+                    string logString = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages);
+                    Log.Error("{0}", logString);
 
                     // Attempt to roll back the transaction.
                     try
@@ -176,12 +183,13 @@ namespace HNCloneApi.Controllers
                     }
                     catch (Exception ex2)
                     {
-                        LogMessages log2 = new LogMessages
+                        LogMessages logMessages2 = new LogMessages
                         {
                             HttpStatusCode = 400,
                             Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
                         };
-                        LogSql(log2);
+                        string logString2 = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages2);
+                        Log.Error("{0}", logString2);
 
                         // This catch block will handle any errors that may have occurred
                         // on the server that would cause the rollback to fail, such as
@@ -218,12 +226,13 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    LogMessages log = new LogMessages
+                    LogMessages logMessages = new LogMessages
                     {
                         HttpStatusCode = 400,
                         Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
                     };
-                    LogSql(log);
+                    string logString = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages);
+                    Log.Error("{0}", logString);
 
                     // Attempt to roll back the transaction.
                     try
@@ -232,12 +241,13 @@ namespace HNCloneApi.Controllers
                     }
                     catch (Exception ex2)
                     {
-                        LogMessages log2 = new LogMessages
+                        LogMessages logMessages2 = new LogMessages
                         {
                             HttpStatusCode = 400,
                             Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
                         };
-                        LogSql(log2);
+                        string logString2 = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages2);
+                        Log.Error("{0}", logString2);
 
                         // This catch block will handle any errors that may have occurred
                         // on the server that would cause the rollback to fail, such as
@@ -304,12 +314,13 @@ namespace HNCloneApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    LogMessages log = new LogMessages
+                    LogMessages logMessages = new LogMessages
                     {
                         HttpStatusCode = 400,
                         Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
                     };
-                    LogSql(log);
+                    string logString = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages);
+                    Log.Error("{0}", logString);
                 }
             }
 
@@ -325,48 +336,6 @@ namespace HNCloneApi.Controllers
         {
             string ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             return ip == "46.101.225.71";
-        }
-
-        private void LogSql(LogMessages logMessages)
-        {
-            logMessages.IpAddress = logMessages.IpAddress = _accessor.HttpContext.Connection.RemoteIpAddress;
-            logMessages.DateTime = DateTime.Now;
-
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                SqlCommand command = connection.CreateCommand();
-                SqlTransaction transaction = connection.BeginTransaction();
-                command.Connection = connection;
-                command.Transaction = transaction;
-
-                try
-                {
-                    command.CommandText = "INSERT INTO logmessages (ipaddress, username, datetime, httpstatuscode, message) VALUES (@ipaddress, @username, @datetime, @httpstatuscode, @message)";
-                    command.Parameters.Add("@ipaddress", SqlDbType.NVarChar).Value = logMessages.IpAddress;
-                    command.Parameters.Add("@username", SqlDbType.NVarChar).Value = logMessages.Username;
-                    command.Parameters.Add("@datetime", SqlDbType.DateTime).Value = logMessages.DateTime;
-                    command.Parameters.Add("@httpstatuscode", SqlDbType.Int).Value = logMessages.HttpStatusCode;
-                    command.Parameters.Add("@message", SqlDbType.NVarChar).Value = logMessages.Message;
-                    command.ExecuteNonQuery();
-
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    // Attempt to roll back the transaction.
-                    try
-                    {
-                        transaction.Rollback();
-                    }
-                    catch (Exception ex2)
-                    {
-                        // This catch block will handle any errors that may have occurred
-                        // on the server that would cause the rollback to fail, such as
-                        // a closed connection.
-                    }
-                }
-            }
         }
     }
 }

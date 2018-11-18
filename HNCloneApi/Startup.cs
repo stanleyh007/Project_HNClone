@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Prometheus;
+using Serilog;
 
 namespace HNCloneApi
 {
@@ -20,6 +21,11 @@ namespace HNCloneApi
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File(@"C:\log-api\log-.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+            Log.Information("API started");
         }
 
         public IConfiguration Configuration { get; }
