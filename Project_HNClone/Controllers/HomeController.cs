@@ -31,7 +31,7 @@ namespace Project_HNClone.Controllers
             StoryQueries storyQueries = new StoryQueries(configuration);
 
             List<Data.Story> cacheEntry;
-            string cacheKey = System.Reflection.MethodBase.GetCurrentMethod().Name;
+            string cacheKey = "Index";
 
             // Look for cache key.
             if (!_cache.TryGetValue(cacheKey, out cacheEntry))
@@ -63,7 +63,7 @@ namespace Project_HNClone.Controllers
             StoryQueries storyQueries = new StoryQueries(configuration);
             
             List<Data.Story> cacheEntry;
-            string cacheKey = System.Reflection.MethodBase.GetCurrentMethod().Name;
+            string cacheKey = "Newest";
 
             // Look for cache key.
             if (!_cache.TryGetValue(cacheKey, out cacheEntry))
@@ -100,7 +100,7 @@ namespace Project_HNClone.Controllers
             CommentQueries commentQueries = new CommentQueries(configuration);
 
             List<Data.Comment> cacheEntry;
-            string cacheKey = System.Reflection.MethodBase.GetCurrentMethod().Name;
+            string cacheKey = "Newcomments";
 
             // Look for cache key.
             if (!_cache.TryGetValue(cacheKey, out cacheEntry))
