@@ -19,6 +19,8 @@ namespace Project_HNClone.Controllers
         private readonly IConfiguration configuration;
 
         private IMemoryCache _cache;
+        private readonly TimeSpan _cacheSlidingExpiration = TimeSpan.FromMinutes(5);
+        private readonly TimeSpan _cacheAbsoluteExpiration = TimeSpan.FromMinutes(30);
 
         public HomeController(IConfiguration config, IMemoryCache memoryCache)
         {
@@ -42,7 +44,8 @@ namespace Project_HNClone.Controllers
                 // Set cache options.
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     // Keep in cache for this time.
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+                    .SetSlidingExpiration(_cacheSlidingExpiration)
+                    .SetAbsoluteExpiration(_cacheAbsoluteExpiration);
 
                 // Save data in cache.
                 _cache.Set(cacheKey, cacheEntry, cacheEntryOptions);
@@ -74,7 +77,8 @@ namespace Project_HNClone.Controllers
                 // Set cache options.
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     // Keep in cache for this time.
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+                    .SetSlidingExpiration(_cacheSlidingExpiration)
+                    .SetAbsoluteExpiration(_cacheAbsoluteExpiration);
 
                 // Save data in cache.
                 _cache.Set(cacheKey, cacheEntry, cacheEntryOptions);
@@ -111,7 +115,8 @@ namespace Project_HNClone.Controllers
                 // Set cache options.
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     // Keep in cache for this time.
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+                    .SetSlidingExpiration(_cacheSlidingExpiration)
+                    .SetAbsoluteExpiration(_cacheAbsoluteExpiration);
 
                 // Save data in cache.
                 _cache.Set(cacheKey, cacheEntry, cacheEntryOptions);
