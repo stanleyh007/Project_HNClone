@@ -73,7 +73,8 @@ namespace HNCloneApi.Controllers
                     LogMessages logMessages = new LogMessages
                     {
                         HttpStatusCode = 400,
-                        Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
+                        Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message,
+                        IpAddress = _accessor.HttpContext.Connection.RemoteIpAddress.ToString()
                     };
                     string logString = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages);
                     Log.Error("{0}", logString);
@@ -101,7 +102,8 @@ namespace HNCloneApi.Controllers
                 LogMessages logMessages = new LogMessages
                 {
                     HttpStatusCode = 403,
-                    Message = "Post from invalid IP"
+                    Message = "Post from invalid IP",
+                    IpAddress = _accessor.HttpContext.Connection.RemoteIpAddress.ToString()
                 };
                 string logString = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages);
                 Log.Information("{0}", logString);
@@ -109,20 +111,23 @@ namespace HNCloneApi.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden, "403 Forbidden");
             }
 
-            if (storyAndComment.post_parent == -1)
+            if (!string.IsNullOrEmpty(storyAndComment.username))
             {
-                bool success = Story(storyAndComment);
-                if (success)
+                if (storyAndComment.post_parent == -1)
                 {
-                    return Ok();
+                    bool success = Story(storyAndComment);
+                    if (success)
+                    {
+                        return Ok();
+                    }
                 }
-            }
-            else
-            {
-                bool success = Comment(storyAndComment);
-                if (success)
+                else
                 {
-                    return Ok();
+                    bool success = Comment(storyAndComment);
+                    if (success)
+                    {
+                        return Ok();
+                    }
                 }
             }
 
@@ -132,7 +137,8 @@ namespace HNCloneApi.Controllers
             {
                 Username = storyAndComment.username,
                 HttpStatusCode = 400,
-                Message = "Post bad request: " + jsonStoryAndComment
+                Message = "Post bad request: " + jsonStoryAndComment,
+                IpAddress = _accessor.HttpContext.Connection.RemoteIpAddress.ToString()
             };
             string logString2 = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages2);
             Log.Error("{0}", logString2);
@@ -271,7 +277,7 @@ namespace HNCloneApi.Controllers
 
                 try
                 {
-                    command.CommandText = "SELECT * FROM Users WHERE Name = @Name AND Password = @Password";
+                    command.CommandText = "SELECT Id, Name, Password FROM Users WHERE Name = @Name AND Password = @Password";
                     command.Parameters.Add("@Name", SqlDbType.NVarChar).Value = name;
                     command.Parameters.Add("@Password", SqlDbType.NVarChar).Value = password;
 
