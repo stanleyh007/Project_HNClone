@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using HNCloneApi.data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Logging;
 using Serilog;
@@ -19,12 +20,18 @@ namespace HNCloneApi.Controllers
         private readonly string _connectionString;
         private readonly IHttpContextAccessor _accessor;
 
-        public StoryController(IConfiguration config, IHttpContextAccessor accessor)
+        private IMemoryCache _cache;
+        private readonly TimeSpan _cacheSlidingExpiration = TimeSpan.FromMinutes(10);
+        private readonly TimeSpan _cacheAbsoluteExpiration = TimeSpan.FromMinutes(60);
+
+        public StoryController(IConfiguration config, IHttpContextAccessor accessor, IMemoryCache memoryCache)
         {
             IConfiguration configuration = config;
             _connectionString = configuration.GetConnectionString("DefaultConnection");
 
             _accessor = accessor;
+
+            _cache = memoryCache;
         }
 
         [Route("latest")]
@@ -97,7 +104,7 @@ namespace HNCloneApi.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] StoryAndComment storyAndComment)
         {
-            if (!TestIp())
+            if (/*!*/TestIp())
             {
                 LogMessages logMessages = new LogMessages
                 {
@@ -267,72 +274,86 @@ namespace HNCloneApi.Controllers
 
         private int UserId(string name, string password)
         {
-            bool verified = false;
-            int userId = -1;
+            CacheEntry cacheEntry;
+            string cacheKey = name + "-|-" + password;
 
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            if (!_cache.TryGetValue(cacheKey, out cacheEntry))
             {
-                SqlCommand command = new SqlCommand();
-                command.Connection = connection;
+                cacheEntry = new CacheEntry();
 
-                try
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    command.CommandText = "SELECT Id, Name, Password FROM Users WHERE Name = @Name AND Password = @Password";
-                    command.Parameters.Add("@Name", SqlDbType.NVarChar).Value = name;
-                    command.Parameters.Add("@Password", SqlDbType.NVarChar).Value = password;
+                    SqlCommand command = new SqlCommand();
+                    command.Connection = connection;
 
-                    connection.Open();
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
+                    try
                     {
+                        command.CommandText = "SELECT Id, Name, Password FROM Users WHERE Name = @Name AND Password = @Password";
+                        command.Parameters.Add("@Name", SqlDbType.NVarChar).Value = name;
+                        command.Parameters.Add("@Password", SqlDbType.NVarChar).Value = password;
 
-                        for (int i = 0; i < reader.FieldCount; i++)
+                        connection.Open();
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
                         {
-                            if (reader.GetName(i) == "Name")
+
+                            for (int i = 0; i < reader.FieldCount; i++)
                             {
-                                if (name == (string)reader.GetValue(i))
+                                if (reader.GetName(i) == "Name")
                                 {
-                                    verified = true;
+                                    if (name == (string)reader.GetValue(i))
+                                    {
+                                        cacheEntry.Verified = true;
+                                    }
+                                    else
+                                    {
+                                        cacheEntry.Verified = false;
+                                    }
                                 }
-                                else
+                                if (reader.GetName(i) == "Password")
                                 {
-                                    verified = false;
+                                    if (password == (string)reader.GetValue(i))
+                                    {
+                                        cacheEntry.Verified = true;
+                                    }
+                                    else
+                                    {
+                                        cacheEntry.Verified = false;
+                                    }
                                 }
-                            }
-                            if (reader.GetName(i) == "Password")
-                            {
-                                if (password == (string)reader.GetValue(i))
+                                if (reader.GetName(i) == "Id")
                                 {
-                                    verified = true;
+                                    cacheEntry.UserId = (int)reader.GetValue(i);
                                 }
-                                else
-                                {
-                                    verified = false;
-                                }
-                            }
-                            if (reader.GetName(i) == "Id")
-                            {
-                                userId = (int) reader.GetValue(i);
                             }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    LogMessages logMessages = new LogMessages
+                    catch (Exception ex)
                     {
-                        HttpStatusCode = 400,
-                        Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
-                    };
-                    string logString = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages);
-                    Log.Error("{0}", logString);
+                        LogMessages logMessages = new LogMessages
+                        {
+                            HttpStatusCode = 400,
+                            Message = "Commit Exception Type: " + ex.GetType() + " Message: " + ex.Message
+                        };
+                        string logString = Newtonsoft.Json.JsonConvert.SerializeObject(logMessages);
+                        Log.Error("{0}", logString);
+                    }
                 }
+
+                // Set cache options.
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    // Keep in cache for this time.
+                    .SetSlidingExpiration(_cacheSlidingExpiration)
+                    .SetAbsoluteExpiration(_cacheAbsoluteExpiration);
+
+                // Save data in cache.
+                _cache.Set(cacheKey, cacheEntry, cacheEntryOptions);
             }
 
-            if (verified)
+            if (cacheEntry.Verified)
             {
-                return userId;
+                return cacheEntry.UserId;
             }
 
             return -1;
@@ -343,5 +364,11 @@ namespace HNCloneApi.Controllers
             string ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             return ip == "46.101.225.71";
         }
+    }
+
+    internal class CacheEntry
+    {
+        public int UserId { get; set; }
+        public bool Verified { get; set; }
     }
 }
