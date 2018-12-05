@@ -104,7 +104,7 @@ namespace HNCloneApi.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] StoryAndComment storyAndComment)
         {
-            if (/*!*/TestIp())
+            if (!TestIp())
             {
                 LogMessages logMessages = new LogMessages
                 {
